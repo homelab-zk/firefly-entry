@@ -1,0 +1,17 @@
+# Your own configuration and secrets: never commit these
+.env
+*.env
+!.env.example
+*_token.txt
+*token*.txt
+docker-compose.yml
+data/
+
+# Python / editor leftovers
+__pycache__/
+*.pyc
+.venv/
+venv/
+.vscode/
+.idea/
+.DS_Store

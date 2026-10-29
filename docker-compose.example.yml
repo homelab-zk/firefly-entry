@@ -1,0 +1,15 @@
+# Copy to docker-compose.yml and adjust the port and token file name.
+services:
+  entry:
+    build: ./app
+    container_name: firefly_entry
+    restart: unless-stopped
+    # Run as your own user so the container can read the mode-600 token file (check with `id -u` / `id -g`).
+    user: "1000:1000"
+    env_file: .env
+    ports:
+      # Only your reverse proxy should reach this port: the app trusts X-Forwarded-* headers.
+      - 8082:8000
+    volumes:
+      - ./data:/data          # passkeys (fingerprint) and the PIN set in the app
+      - ./firefly_token.txt:/run/secrets/firefly_token:ro
