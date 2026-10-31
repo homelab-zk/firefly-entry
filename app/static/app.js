@@ -324,7 +324,37 @@ function partyHint(note = "") {
   const known = st.meta[kind].some((n) => n.toLowerCase() === v.toLowerCase());
   hint("party-hint", (known ? "Existing account" : "New account: Firefly will create it") + note, !known);
 }
-$("party").addEventListener("input", () => { partyHint(); updateSave(); });
+// Own suggestion list: the browser's <datalist> is unreliable on phones (empty until you type, often nothing in an installed app).
+function partySuggest() {
+  const box = $("party-suggest"), kind = partyKind();
+  const q = $("party").value.trim().toLowerCase();
+  let names = kind && st.meta ? [...st.meta[kind]].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" })) : [];
+  if (q) names = names.filter((n) => n.toLowerCase().includes(q)).sort((a, b) => b.toLowerCase().startsWith(q) - a.toLowerCase().startsWith(q));
+  if (names.length === 1 && names[0].toLowerCase() === q) names = [];
+  box.replaceChildren(...names.map((n) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("role", "option");
+    b.textContent = n;
+    return b;
+  }));
+  box.classList.toggle("hidden", !names.length);
+  $("party").setAttribute("aria-expanded", String(names.length > 0));
+}
+const closeSuggest = () => { $("party-suggest").classList.add("hidden"); $("party").setAttribute("aria-expanded", "false"); };
+$("party").addEventListener("focus", partySuggest);
+$("party").addEventListener("blur", () => setTimeout(closeSuggest, 150));
+// mousedown must not take focus from the field, or the list closes before the tap counts
+$("party-suggest").addEventListener("mousedown", (e) => e.preventDefault());
+$("party-suggest").addEventListener("click", (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  $("party").value = b.textContent;
+  closeSuggest();
+  partyHint();
+  updateSave();
+});
+$("party").addEventListener("input", () => { partyHint(); partySuggest(); updateSave(); });
 $("date").addEventListener("input", () => { st.dateTouched = true; hint("date-hint", ""); updateSave(); });
 
 // ---------- photo viewer ----------
@@ -381,12 +411,12 @@ function prepConfirm() {
   $("rcur-box").classList.toggle("hidden", !kind);
   if (kind) {
     $("party-label").textContent = kind === "expense" ? "Paid to" : "Received from";
-    $("party-list").replaceChildren(...st.meta[kind].map((n) => Object.assign(document.createElement("option"), { value: n })));
     const codes = st.meta.currencies.map((c) => c.code);
     $("rcur").replaceChildren(...(codes.includes(cur) ? [] : [cur]).concat(codes).map((c) => new Option(c, c)));
     $("rcur").value = cur;
   }
   $("party").value = "";
+  closeSuggest();
   hint("party-hint", "");
   hint("rcur-hint", "");
   st.dateTouched = false;

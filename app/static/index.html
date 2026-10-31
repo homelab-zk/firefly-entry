@@ -91,8 +91,8 @@
   <input id="date" type="date">
   <div id="party-box">
     <label for="party" id="party-label">Paid to</label>
-    <input id="party" list="party-list" placeholder="Type or pick a name" autocomplete="off">
-    <datalist id="party-list"></datalist>
+    <input id="party" placeholder="Type or tap to pick a name" autocomplete="off" autocapitalize="words" role="combobox" aria-expanded="false" aria-controls="party-suggest">
+    <div id="party-suggest" class="suggest hidden" role="listbox"></div>
     <p class="muted hint" id="party-hint"></p>
   </div>
   <div id="rcur-box">

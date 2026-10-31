@@ -39,3 +39,8 @@ input[type=date]{min-height:52px}
 .viewer-scroll.zoom img{max-width:none;max-height:none;width:250%;cursor:zoom-out}
 .viewer-close{position:absolute;top:12px;right:12px;z-index:1;width:48px;height:48px;border-radius:24px;font-size:1.8rem;line-height:1;color:#fff;background:rgba(0,0,0,.6);border:1px solid #555;cursor:pointer}
 .viewer-tip{margin:6px 0 12px;text-align:center;font-size:.8rem;color:#aaa}
+
+.suggest{margin-top:6px;max-height:min(40vh,260px);overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.suggest button{display:block;width:100%;padding:13px 14px;font:inherit;text-align:left;color:var(--fg);background:none;border:0;border-bottom:1px solid var(--line);cursor:pointer}
+.suggest button:last-child{border-bottom:0}
+.suggest button:active{background:var(--line)}
